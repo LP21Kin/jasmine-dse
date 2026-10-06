@@ -1,0 +1,14 @@
+{
+  "name": "jasmine-dse",
+  "private": true,
+  "version": "1.0.0",
+  "description": "密碼保護嘅文憑試倒數小頁面",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/test.mjs"
+  },
+  "dependencies": {
+    "staticrypt": "3.5.4"
+  }
+}

@@ -1,0 +1,68 @@
+name: 部署網頁
+
+on:
+  push:
+    branches: ["main"]
+  schedule:
+    # 香港時間凌晨 00:05（UTC+8）= 16:05 UTC
+    - cron: "5 16 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: 取出程式碼
+        uses: actions/checkout@v4
+
+      - name: 設定 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: 安裝套件
+        run: npm ci
+
+      - name: 測試倒數、日子同加密
+        run: npm test
+
+      - name: 確認有設定密碼
+        env:
+          SITE_PASSWORD: ${{ secrets.SITE_PASSWORD }}
+        run: |
+          if [ -z "$SITE_PASSWORD" ]; then
+            echo "::error::未設定 SITE_PASSWORD。請到 Settings → Secrets and variables → Actions 新增名為 SITE_PASSWORD 的 secret，然後重新執行「部署網頁」。未有密碼就唔會部署，避免網頁冇加密。"
+            exit 1
+          fi
+
+      - name: 建立並加密網頁
+        env:
+          STATICRYPT_PASSWORD: ${{ secrets.SITE_PASSWORD }}
+        run: npm run build
+
+      - name: 上傳網頁
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
