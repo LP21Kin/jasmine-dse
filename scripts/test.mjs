@@ -46,13 +46,13 @@ assert(messages.length >= 60, "鼓勵句子至少 60 句");
 assert(new Set(messages).size === messages.length, "鼓勵句子唔好重複");
 assert(!messages.some((message) => message.includes("Jasmine")), "鼓勵句子唔好寫名");
 
-const expectedSubjects = ["中文", "英文", "數學", "數學延伸部分單元一", "公民與社會發展", "經濟", "物理"];
+const expectedSubjects = ["中文", "英文", "數學", "M1", "公民與社會發展", "經濟", "物理"];
 assert(
   expectedSubjects.every((name) => subjects.some((subject) => subject.name === name && subject.tips.length >= 3)),
   "七科都要有貼士"
 );
 
-const banned = ["HKU", "CUHK", "HKUST", "PolyU", "CityU", "HKBU", "EdUHK", "THEi", "JUPAS", "HKDSE", "M1"];
+const banned = ["HKU", "CUHK", "HKUST", "PolyU", "CityU", "HKBU", "EdUHK", "THEi", "JUPAS", "HKDSE"];
 const visibleText = [
   ...events.flatMap((event) => [event.title, event.detail || ""]),
   ...messages,
@@ -112,6 +112,21 @@ for (const [fg, bg, min] of pairs) {
   assert(ratio >= min, `${fg} 喺 ${bg} 對比 ${ratio.toFixed(2)}，低過 ${min}`);
 }
 
+const pageSource = fs.readFileSync(path.join(root, "src/page.js"), "utf8");
+const cssSource = fs.readFileSync(path.join(root, "src/styles.css"), "utf8");
+assert(pageSource.includes("flip-digit") && pageSource.includes("playFlip"), "日子要用揭頁牌");
+assert(pageSource.includes("hourglass") && pageSource.includes("sand-top"), "時間旁邊要有沙漏");
+assert(pageSource.includes("avatar-eyes") && pageSource.includes("mascot"), "封面要有原創長髮女孩頭像");
+assert(!pageSource.includes("bunny"), "封面唔再使用兔子");
+assert(
+  pageSource.includes("subject-charms") &&
+    ["中文", "英文", "數學", "M1", "公民", "經濟", "物理"].every((name) => pageSource.includes(`"${name}"`)),
+  "封面要有七科小圖"
+);
+assert(!pageSource.includes("單元一"), "封面同程式唔好再寫單元一");
+assert(cssSource.includes("flip-down") && cssSource.includes("sand-drain"), "翻牌同沙漏要有動畫");
+assert(cssSource.includes("prefers-reduced-motion"), "要尊重減少動態");
+
 const workflow = fs.readFileSync(path.join(root, ".github/workflows/pages.yml"), "utf8");
 assert(workflow.includes('cron: "5 16 * * *"'), "每日排程應該係 16:05 UTC");
 assert(workflow.includes("secrets.SITE_PASSWORD"), "workflow 要用 SITE_PASSWORD");
@@ -140,7 +155,7 @@ const built = spawnSync(process.execPath, ["scripts/build.mjs"], {
 assert(built.status === 0, `加密建置失敗：${built.stderr || built.stdout}`);
 
 const encrypted = fs.readFileSync(path.join(root, "dist/index.html"), "utf8");
-for (const phrase of ["Jasmine", "公民與社會發展", "慢慢嚟都得", "香港理工大學", "2027-04-06", "數學延伸部分單元一"]) {
+for (const phrase of ["Jasmine", "公民與社會發展", "慢慢嚟都得", "香港理工大學", "2027-04-06", "概率同正態分佈"]) {
   assert(!encrypted.includes(phrase), `加密頁唔應該睇到「${phrase}」`);
 }
 assert(encrypted.includes("喺呢部手機記住密碼"), "密碼頁要有記住密碼");
