@@ -1,0 +1,8 @@
+{
+  "_comment": "改筆試首日：只改 examDate（例如 2027-04-06）。考評局如果取消「暫定」，把 examDateTentative 改做 false。writtenExamEnd 係筆試期最後一日。唔好改 timezone。",
+  "examDate": "2027-04-06",
+  "examDateTentative": true,
+  "writtenExamEnd": "2027-05-03",
+  "timezone": "Asia/Hong_Kong",
+  "sourceUrl": "https://www.hkeaa.edu.hk/tc/hkdse/event_timetable/"
+}

@@ -1,0 +1,180 @@
+{
+  "_comment": "所有重要日子都喺呢度改。start / end 用 2026-10-03 呢種格式。startTime / endTime 用 09:00 呢種 24 小時格式，可以留空。未公布嘅日子唔好估，留 start 為 null，並加 \"unannounced\": true。category 只可以用 info（大學資訊日）或者 jupas（聯招）。加新項目記得上一個項目最後有逗號。",
+  "events": [
+    {
+      "title": "香港城市大學、香港浸會大學資訊日",
+      "category": "info",
+      "start": "2026-10-03"
+    },
+    {
+      "title": "香港理工大學資訊日",
+      "category": "info",
+      "start": "2026-10-10",
+      "detail": "需登記"
+    },
+    {
+      "title": "香港中文大學資訊日",
+      "category": "info",
+      "start": "2026-10-17",
+      "detail": "入學講座需登記"
+    },
+    {
+      "title": "香港大學資訊日",
+      "category": "info",
+      "start": "2026-10-24",
+      "detail": "建議登記"
+    },
+    {
+      "title": "聖方濟各大學資訊日",
+      "category": "info",
+      "start": "2026-10-30",
+      "end": "2026-10-31"
+    },
+    {
+      "title": "香港科技大學、香港教育大學資訊日",
+      "category": "info",
+      "start": "2026-10-31"
+    },
+    {
+      "title": "香港高等教育科技學院資訊日",
+      "category": "info",
+      "start": "2026-11-06",
+      "end": "2026-11-07"
+    },
+    {
+      "title": "香港樹仁大學資訊日",
+      "category": "info",
+      "start": "2026-11-14"
+    },
+    {
+      "title": "香港恒生大學資訊日",
+      "category": "info",
+      "start": "2026-11-21"
+    },
+    {
+      "title": "東華學院資訊日",
+      "category": "info",
+      "start": null,
+      "unannounced": true
+    },
+    {
+      "title": "遞交聯招申請同繳付申請費",
+      "category": "jupas",
+      "start": "2026-10-07",
+      "startTime": "09:00",
+      "end": "2026-12-02",
+      "endTime": "17:00",
+      "detail": "申請費 500 港元。要喺截止前交表同付款，逾期唔會收。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/application-other-submission-deadline/application-period-and-fee/"
+    },
+    {
+      "title": "逾期申請",
+      "category": "jupas",
+      "start": "2026-12-04",
+      "startTime": "09:00",
+      "end": "2027-01-13",
+      "endTime": "17:00",
+      "detail": "費用 1,000 港元，已包括原本 500 港元申請費同 500 港元逾期費。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/application-other-submission-deadline/application-period-and-fee/"
+    },
+    {
+      "title": "放榜前更改課程選擇",
+      "category": "jupas",
+      "start": "2026-12-04",
+      "startTime": "09:00",
+      "end": "2027-05-26",
+      "endTime": "17:00",
+      "detail": "每次 100 港元，次數冇上限。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/application-other-submission-deadline/selection-updating-and-modification-of-programme-choices/"
+    },
+    {
+      "title": "文憑試放榜",
+      "category": "jupas",
+      "start": "2027-07-14",
+      "tentative": true,
+      "detail": "甲類、乙類同丙類科目。考評局重要日期頁標明暫定。",
+      "source": "https://www.hkeaa.edu.hk/tc/hkdse/event_timetable/"
+    },
+    {
+      "title": "放榜後更改課程選擇",
+      "category": "jupas",
+      "start": "2027-07-14",
+      "startTime": "15:00",
+      "end": "2027-07-16",
+      "endTime": "15:00",
+      "adjustable": true,
+      "detail": "免費改一次。可以加或者換最多 5 個課程，亦可以調次序或者刪除。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/application-other-submission-deadline/selection-updating-and-modification-of-programme-choices/"
+    },
+    {
+      "title": "放榜後改選，一次過再交",
+      "category": "jupas",
+      "start": "2027-07-16",
+      "startTime": "15:00",
+      "adjustable": true,
+      "detail": "如果免費嗰次改完仲想再改，要付 250 港元，同樣喺呢個時間前完成。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/application-other-submission-deadline/selection-updating-and-modification-of-programme-choices/"
+    },
+    {
+      "title": "公布主輪取錄結果",
+      "category": "jupas",
+      "start": "2027-08-04",
+      "startTime": "09:00",
+      "adjustable": true,
+      "detail": "每位申請人最多得一個主輪取錄。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/post-hkdse-exam-results-announcement/main-round-offer/"
+    },
+    {
+      "title": "繳付主輪取錄確認費",
+      "category": "jupas",
+      "start": "2027-08-04",
+      "startTime": "10:30",
+      "end": "2027-08-05",
+      "endTime": "17:00",
+      "adjustable": true,
+      "detail": "5,000 港元。系統由上午 10 時 30 分先開始收呢筆錢。逾時會當放棄，提早少少處理會安心啲。",
+      "source": "https://www.jupas.edu.hk/en/page/detail/512/"
+    },
+    {
+      "title": "文憑試覆核成績公布",
+      "category": "jupas",
+      "start": "2027-08-11",
+      "adjustable": true,
+      "detail": "聯招官方日程表列出，由考評局公布。只有覆核後成績有提升，先可以申請重新考慮取錄。",
+      "source": "https://www.jupas.edu.hk/f/page/231/JUPAS%202027%20Admissions%20Exercise%20%E2%80%93%20Application%20Key%20Dates%20and%20Deadlines%20V1.1.pdf"
+    },
+    {
+      "title": "申請重新考慮取錄",
+      "category": "jupas",
+      "start": "2027-08-12",
+      "startTime": "09:00",
+      "end": "2027-08-12",
+      "endTime": "17:00",
+      "adjustable": true,
+      "detail": "唔會自動幫你做，要當日自己喺系統提交。可以免費改一次課程選擇。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/post-hkdse-exam-results-announcement/main-round-offer/request-for-reconsideration-of-application/"
+    },
+    {
+      "title": "公布重新考慮後嘅取錄結果",
+      "category": "jupas",
+      "start": "2027-08-19",
+      "startTime": "09:00",
+      "end": "2027-08-19",
+      "endTime": "17:00",
+      "adjustable": true,
+      "detail": "想接受就要喺當日下午 5 時前處理。如果主輪已經付過確認費，通常唔使再付一次。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/post-hkdse-exam-results-announcement/main-round-offer/"
+    },
+    {
+      "title": "公布補選輪取錄結果",
+      "category": "jupas",
+      "start": "2027-08-24",
+      "startTime": "09:00",
+      "end": "2027-08-24",
+      "endTime": "17:00",
+      "adjustable": true,
+      "detail": "確認費 5,000 港元，要喺當日下午 5 時前繳付。已經有主輪取錄嘅申請人唔會入補選。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/post-hkdse-exam-results-announcement/clearing-round-offer/"
+    }
+  ]
+}
