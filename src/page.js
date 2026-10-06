@@ -64,7 +64,7 @@ function subjectCharms() {
       `<svg viewBox="0 0 32 32"><path d="M6.5 23.5h14M6.5 23.5V11" fill="none" stroke="#d7b7f0" stroke-width="1.6" stroke-linecap="round"/><path d="M8 21.5c2.2-.8 3.4-5.2 6.2-5.2 2.6 0 3.2 3.2 5.6 2.2" fill="none" stroke="#e07a98" stroke-width="1.7" stroke-linecap="round"/><path d="M21.5 8.5h7M23.2 8.5v7.2M26.6 8.5v7.2" fill="none" stroke="#8e2a52" stroke-width="1.6" stroke-linecap="round"/></svg>`,
     ],
     [
-      "單元一",
+      "M1",
       `<svg viewBox="0 0 32 32"><path d="M20 5.2c-2.2.2-3.4 1.5-3.7 3.2-.6 3.4 3 4.2 3 8.4 0 5.4-7.2 6.2-7.2 11.2 0 2.3 1.6 3.6 4 3.6" fill="none" stroke="#8e2a52" stroke-width="2" stroke-linecap="round"/><path d="M8 24.5c3.4-.4 5.2-2.6 7.4-6.4" fill="none" stroke="#d7b7f0" stroke-width="1.5" stroke-linecap="round"/></svg>`,
     ],
     [
@@ -82,38 +82,47 @@ function subjectCharms() {
   ];
   const wrap = el("div", "subject-charms");
   wrap.setAttribute("aria-hidden", "true");
-  for (const [name, markup] of items) {
-    const charm = svgFrom(markup, "charm");
-    charm.append(el("span", "charm-name", name));
-    wrap.append(charm);
+  for (const rowItems of [items.slice(0, 4), items.slice(4)]) {
+    const row = el("div", "charm-row");
+    for (const [name, markup] of rowItems) {
+      const charm = svgFrom(markup, "charm");
+      charm.append(el("span", "charm-name", name));
+      row.append(charm);
+    }
+    wrap.append(row);
   }
   return wrap;
 }
 
-function bunnyMascot() {
+function girlAvatar() {
   return svgFrom(
-    `<svg viewBox="0 0 120 150">
-      <ellipse cx="46" cy="34" rx="12" ry="26" fill="#fffaf8" stroke="#e7a8bc" stroke-width="2.5"/>
-      <ellipse cx="76" cy="34" rx="12" ry="26" fill="#fffaf8" stroke="#e7a8bc" stroke-width="2.5"/>
-      <ellipse cx="46" cy="36" rx="5.5" ry="16" fill="#ffd0e0"/>
-      <ellipse cx="76" cy="36" rx="5.5" ry="16" fill="#ffd0e0"/>
-      <circle cx="61" cy="74" r="32" fill="#fffaf8" stroke="#e7a8bc" stroke-width="2.5"/>
-      <ellipse cx="44" cy="82" rx="6" ry="3.6" fill="#ffb7cc"/>
-      <ellipse cx="78" cy="82" rx="6" ry="3.6" fill="#ffb7cc"/>
-      <circle cx="50" cy="72" r="3.2" fill="#5c3a48"/>
-      <circle cx="72" cy="72" r="3.2" fill="#5c3a48"/>
-      <circle cx="51.2" cy="70.8" r="1.1" fill="#fff"/>
-      <circle cx="73.2" cy="70.8" r="1.1" fill="#fff"/>
-      <path d="M61 78 l-3.2 3.4 h6.4 z" fill="#e07a98"/>
-      <path d="M54 86 q7 7 14 0" fill="none" stroke="#c45b7a" stroke-width="1.8" stroke-linecap="round"/>
-      <ellipse cx="61" cy="118" rx="26" ry="20" fill="#fffaf8" stroke="#e7a8bc" stroke-width="2.5"/>
-      <path d="M80 112 q14 2 16 14" fill="none" stroke="#f3c6d4" stroke-width="7" stroke-linecap="round"/>
-      <g transform="rotate(32 98 126)">
-        <rect x="84" y="120" width="30" height="8" rx="2" fill="#ffe08a" stroke="#e0b15a" stroke-width="1"/>
-        <rect x="110" y="120" width="7" height="8" rx="1" fill="#f3a0b8"/>
-        <path d="M84 120 L76 124 L84 128 Z" fill="#f6d7b8"/>
-        <path d="M76 124 L82 124" stroke="#5c3a48" stroke-width="1.2" stroke-linecap="round"/>
+    `<svg viewBox="0 0 140 168">
+      <path d="M34 78c-8 28-6 62 8 78 10 4 22-6 28-18 4 16 16 26 30 24 16-2 28-24 26-52 12-8 16-28 10-46-8-28-28-42-48-40-22-2-40 16-54 54z" fill="#f7c5d4" stroke="#d4849c" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M22 150c14-22 32-32 48-32s36 10 50 32c-16 14-82 14-98 0z" fill="#ffe3ee" stroke="#e7a8bc" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M62 118h16c2 10 2 18 0 26h-16c-2-8-2-16 0-26z" fill="#fff4ee"/>
+      <ellipse cx="70" cy="84" rx="32" ry="34" fill="#fff6f2" stroke="#e7a8bc" stroke-width="2.2"/>
+      <path d="M42 74c4-28 18-40 32-40 16 0 30 14 34 38-12-12-20 2-30-4-8 10-16-6-36 6z" fill="#f7c5d4" stroke="#d4849c" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M40 86c-6 18-8 40-2 62" fill="none" stroke="#e7a0b6" stroke-width="9" stroke-linecap="round"/>
+      <path d="M100 86c6 18 8 40 2 62" fill="none" stroke="#e7a0b6" stroke-width="9" stroke-linecap="round"/>
+      <path d="M46 70c8 8 14 4 18-2" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+      <g class="avatar-eyes">
+        <ellipse cx="57" cy="86" rx="7.2" ry="8.2" fill="#fff"/>
+        <ellipse cx="83" cy="86" rx="7.2" ry="8.2" fill="#fff"/>
+        <ellipse cx="58" cy="88" rx="3.6" ry="4.2" fill="#5c3a48"/>
+        <ellipse cx="84" cy="88" rx="3.6" ry="4.2" fill="#5c3a48"/>
+        <circle cx="59.4" cy="86.2" r="1.35" fill="#fff"/>
+        <circle cx="85.4" cy="86.2" r="1.35" fill="#fff"/>
       </g>
+      <g fill="none" stroke="#c45b7a" stroke-width="2.15">
+        <circle cx="57" cy="86" r="11.2"/>
+        <circle cx="83" cy="86" r="11.2"/>
+        <path d="M68.2 86h3.6" stroke-linecap="round"/>
+        <path d="M46 82h-6M94 82h6" stroke-linecap="round"/>
+      </g>
+      <ellipse cx="44" cy="98" rx="5.5" ry="3" fill="#ffb7cc"/>
+      <ellipse cx="96" cy="98" rx="5.5" ry="3" fill="#ffb7cc"/>
+      <path d="M70 96.5v3.2" stroke="#e7a8bc" stroke-width="1.4" stroke-linecap="round"/>
+      <path d="M62 106q8 7 16 0" fill="none" stroke="#c45b7a" stroke-width="1.8" stroke-linecap="round"/>
     </svg>`,
     "mascot"
   );
@@ -484,7 +493,7 @@ function render() {
   copy.append(el("h1", null, "Jasmine，加油！"));
   copy.append(el("p", "lede", "一日一步，已經好好。"));
   copy.append(el("p", "today", formatChineseDate(shownDate)));
-  row.append(copy, bunnyMascot());
+  row.append(copy, girlAvatar());
   header.append(row, subjectCharms());
   const nav = el("nav", "quick");
   nav.setAttribute("aria-label", "頁面章節");

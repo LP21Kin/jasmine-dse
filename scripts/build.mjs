@@ -165,7 +165,7 @@ if (result.status !== 0) {
 const encryptedPath = path.join(distDir, "index.html");
 if (!fs.existsSync(encryptedPath)) fail("加密後搵唔到 dist/index.html。");
 const encrypted = fs.readFileSync(encryptedPath, "utf8");
-const leaked = ["Jasmine", "公民與社會發展", "慢慢嚟都得", "香港理工大學", "數學延伸部分單元一"].filter((phrase) =>
+const leaked = ["Jasmine", "公民與社會發展", "慢慢嚟都得", "香港理工大學", "概率同正態分佈"].filter((phrase) =>
   encrypted.includes(phrase)
 );
 if (leaked.length > 0) {
