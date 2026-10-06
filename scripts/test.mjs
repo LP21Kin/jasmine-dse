@@ -112,6 +112,20 @@ for (const [fg, bg, min] of pairs) {
   assert(ratio >= min, `${fg} 喺 ${bg} 對比 ${ratio.toFixed(2)}，低過 ${min}`);
 }
 
+const pageSource = fs.readFileSync(path.join(root, "src/page.js"), "utf8");
+const cssSource = fs.readFileSync(path.join(root, "src/styles.css"), "utf8");
+assert(pageSource.includes("flip-digit") && pageSource.includes("playFlip"), "日子要用揭頁牌");
+assert(pageSource.includes("hourglass") && pageSource.includes("sand-top"), "時間旁邊要有沙漏");
+assert(pageSource.includes("bunny") || pageSource.includes("mascot"), "要有原創小兔子");
+assert(
+  pageSource.includes("subject-charms") &&
+    ["中文", "英文", "數學", "單元一", "公民", "經濟", "物理"].every((name) => pageSource.includes(`"${name}"`)),
+  "封面要有七科小圖"
+);
+assert(!pageSource.includes(">M1<") && !pageSource.includes('"M1"'), "封面唔好用 M1 簡稱");
+assert(cssSource.includes("flip-down") && cssSource.includes("sand-drain"), "翻牌同沙漏要有動畫");
+assert(cssSource.includes("prefers-reduced-motion"), "要尊重減少動態");
+
 const workflow = fs.readFileSync(path.join(root, ".github/workflows/pages.yml"), "utf8");
 assert(workflow.includes('cron: "5 16 * * *"'), "每日排程應該係 16:05 UTC");
 assert(workflow.includes("secrets.SITE_PASSWORD"), "workflow 要用 SITE_PASSWORD");
