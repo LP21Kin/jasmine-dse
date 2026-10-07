@@ -106,17 +106,18 @@ assert(formatEventWhen(tungWah) === "未公布", "未公布唔好顯示估出來
 
 const schoolEvents = events.filter((event) => event.category === "school");
 assert(schoolEvents.length === 8, "學校日子應該有 8 項");
-const farewell = schoolEvents.find((event) => event.title === "告別崇拜");
+assert(schoolEvents.every((event) => event.title.startsWith("林護 ")), "學校日子標題要加簡稱，方便同其他日子分辨");
+const farewell = schoolEvents.find((event) => event.title === "林護 告別崇拜");
 assert(farewell && formatEventWhen(farewell) === "2027年2月23日（二）下午", `告別崇拜日子不正確：${farewell && formatEventWhen(farewell)}`);
 assert(
-  formatEventWhen(schoolEvents.find((event) => event.title === "統一測驗")) === "2026年10月26日（一） 至 2026年10月31日（六）",
+  formatEventWhen(schoolEvents.find((event) => event.title === "林護 統一測驗")) === "2026年10月26日（一） 至 2026年10月31日（六）",
   "統一測驗日子不正確"
 );
-assert(formatEventWhen(schoolEvents.find((event) => event.title === "中六家長之夜")) === "2026年10月16日（五）", "家長之夜日子不正確");
-assert(formatEventWhen(schoolEvents.find((event) => event.title === "中六家長日")) === "2026年12月5日（六）", "家長日日子不正確");
-const parentNight = classifyEvents(events, "2026-10-07").find((event) => event.title === "中六家長之夜");
+assert(formatEventWhen(schoolEvents.find((event) => event.title === "林護 中六家長之夜")) === "2026年10月16日（五）", "家長之夜日子不正確");
+assert(formatEventWhen(schoolEvents.find((event) => event.title === "林護 中六家長日")) === "2026年12月5日（六）", "家長日日子不正確");
+const parentNight = classifyEvents(events, "2026-10-07").find((event) => event.title === "林護 中六家長之夜");
 assert(parentNight && parentNight.phase === "future", "10 月 7 日家長之夜未到");
-const parentNightPast = classifyEvents(events, "2026-10-17").find((event) => event.title === "中六家長之夜");
+const parentNightPast = classifyEvents(events, "2026-10-17").find((event) => event.title === "林護 中六家長之夜");
 assert(parentNightPast && parentNightPast.phase === "past", "10 月 17 日家長之夜已過");
 const release = events.find((event) => event.title === "文憑試放榜");
 assert(release && release.start === "2027-07-14" && release.tentative === true, "放榜日 7 月 14 日仍然暫定");

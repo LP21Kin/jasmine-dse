@@ -2,47 +2,47 @@
   "_comment": "所有重要日子都喺呢度改。start / end 用 2026-10-03 呢種格式。startTime / endTime 用 09:00 呢種 24 小時格式，可以留空。未公布嘅日子唔好估，留 start 為 null，並加 \"unannounced\": true。category 只可以用 info（大學資訊日）、jupas（聯招）或者 school（學校）。如果只知道上晝定下晝、唔知鐘點，用 period（上午、下午或者晚上），唔好估時間。考試卷別改 data/papers.json，唔好寫喺呢度。加新項目記得上一個項目最後有逗號。",
   "events": [
     {
-      "title": "中六家長之夜",
+      "title": "林護 中六家長之夜",
       "category": "school",
       "start": "2026-10-16"
     },
     {
-      "title": "統一測驗",
+      "title": "林護 統一測驗",
       "category": "school",
       "start": "2026-10-26",
       "end": "2026-10-31"
     },
     {
-      "title": "中六家長日",
+      "title": "林護 中六家長日",
       "category": "school",
       "start": "2026-12-05"
     },
     {
-      "title": "溫習假",
+      "title": "林護 溫習假",
       "category": "school",
       "start": "2027-01-14",
       "end": "2027-01-15"
     },
     {
-      "title": "模擬考試",
+      "title": "林護 模擬考試",
       "category": "school",
       "start": "2027-01-18",
       "end": "2027-02-02"
     },
     {
-      "title": "模考查卷",
+      "title": "林護 模考查卷",
       "category": "school",
       "start": "2027-02-16",
       "end": "2027-02-23"
     },
     {
-      "title": "告別崇拜",
+      "title": "林護 告別崇拜",
       "category": "school",
       "start": "2027-02-23",
       "period": "下午"
     },
     {
-      "title": "溫習期",
+      "title": "林護 溫習期",
       "category": "school",
       "start": "2027-02-24",
       "end": "2027-03-05"
