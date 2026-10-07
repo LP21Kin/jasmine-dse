@@ -13,6 +13,7 @@ import {
   writtenExamStartNote,
   formatPaperLine,
   classifyEvents,
+  nextSchoolEvent,
   sortEvents,
 } from "../src/logic.mjs";
 
@@ -119,6 +120,12 @@ const parentNight = classifyEvents(events, "2026-10-07").find((event) => event.t
 assert(parentNight && parentNight.phase === "future", "10 月 7 日家長之夜未到");
 const parentNightPast = classifyEvents(events, "2026-10-17").find((event) => event.title === "林護 中六家長之夜");
 assert(parentNightPast && parentNightPast.phase === "past", "10 月 17 日家長之夜已過");
+const schoolNow = nextSchoolEvent(schoolEvents, "2026-10-07");
+assert(schoolNow && schoolNow.start === "2026-10-16" && schoolNow.title === "林護 中六家長之夜", "而家林護倒數應該計去家長之夜");
+assert(nextSchoolEvent(schoolEvents, "2026-10-16").start === "2026-10-16", "家長之夜當日仍然計緊嗰日");
+assert(nextSchoolEvent(schoolEvents, "2026-10-17").start === "2026-10-26", "家長之夜過咗就計去統一測驗第一日");
+assert(nextSchoolEvent(schoolEvents, "2026-10-27").start === "2026-12-05", "統一測驗開始日過咗就計去下一個");
+assert(countdownParts("2026-10-16", new Date("2026-10-07T00:00:00+08:00")).days === 9, "10 月 7 日零時到家長之夜係 9 日");
 const release = events.find((event) => event.title === "文憑試放榜");
 assert(release && release.start === "2027-07-14" && release.tentative === true, "放榜日 7 月 14 日仍然暫定");
 
@@ -208,8 +215,13 @@ assert(
 assert(!pageSource.includes("單元一"), "封面同程式唔好再寫單元一");
 assert(cssSource.includes("flip-down") && cssSource.includes("sand-drain"), "翻牌同沙漏要有動畫");
 assert(cssSource.includes("prefers-reduced-motion"), "要尊重減少動態");
-assert(pageSource.includes("我嘅考試日程") && pageSource.includes("考評局時間表"), "要有考試日程同時間表連結");
-assert(pageSource.includes('renderGroup("學校"'), "重要日子要有學校一組");
+assert(pageSource.includes("DSE 考程") && pageSource.includes("考評局時間表"), "要有考程同時間表連結");
+assert(pageSource.includes("林護重要日子") && pageSource.includes("DSE 倒數") && pageSource.includes("溫書貼士"), "章節名稱要改好");
+assert(pageSource.includes("林護倒數") && pageSource.includes("countdown-columns"), "倒數要左右並列，右邊係林護倒數");
+assert(pageSource.includes("仲有") && !pageSource.includes("仔有"), "倒數用字係仲有");
+assert(pageSource.includes("大學資訊日") && pageSource.includes("大學聯招"), "大學資訊日同聯招要留低");
+assert(!pageSource.includes('renderGroup("學校"'), "林護日子唔再塞喺大學重要日子入面");
+assert(cssSource.includes("countdown-columns") && cssSource.includes("grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr)"), "手機都要左右並列");
 assert(cssSource.includes("line-through") && cssSource.includes(".paper.phase-past"), "已過嘅試卷要劃線");
 assert(cssSource.includes(".paper.phase-next"), "下一個試卷要特別標出");
 
@@ -249,7 +261,9 @@ for (const phrase of [
   "2027-04-06",
   "2027-04-08",
   "概率同正態分佈",
-  "我嘅考試日程",
+  "DSE 考程",
+  "林護倒數",
+  "林護重要日子",
   "第一份卷",
   "中六家長之夜",
   "聽力及綜合能力",
@@ -278,7 +292,9 @@ assert(plain.includes("慢慢嚟都得"), "解鎖後要有鼓勵句子");
 assert(plain.includes("東華學院資訊日"), "解鎖後要有資訊日");
 assert(plain.includes("暫定"), "解鎖後放榜同筆試期尾段仍然標明暫定");
 assert(plain.includes("第一份卷：中文"), "解鎖後倒數要計去第一份卷");
-assert(plain.includes("我嘅考試日程"), "解鎖後要有考試日程");
+assert(plain.includes("DSE 考程"), "解鎖後要有考程");
+assert(plain.includes("林護重要日子"), "解鎖後要有林護重要日子");
+assert(plain.includes("林護倒數"), "解鎖後要有林護倒數");
 assert(plain.includes("中六家長之夜"), "解鎖後要有學校日子");
 assert(plain.includes("考評局時間表"), "解鎖後要有時間表連結");
 assert(plain.includes('"examDateTentative":false'), "解鎖後嘅資料唔好再把筆試開始標做暫定");
