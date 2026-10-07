@@ -254,6 +254,50 @@ function renderEvent(event) {
   return article;
 }
 
+function renderCountdownDate(config) {
+  const line = el("p", "countdown-date");
+  if (config.examLabel) line.append(el("span", "countdown-date-label", config.examLabel));
+  const day = formatChineseDate(config.examDate) + (config.examDateTentative ? "（暫定）" : "");
+  line.append(el("span", "countdown-date-day", day));
+  return line;
+}
+
+function renderPaper(paper) {
+  const row = el("article", `paper phase-${paper.phase}`);
+  if (paper.phase === "past") row.append(el("span", "sr-only", "已過"));
+  if (paper.phase === "next") {
+    const badges = el("div", "badges");
+    badges.append(badge("下一個", "next"));
+    row.append(badges);
+  } else if (paper.phase === "ongoing") {
+    const badges = el("div", "badges");
+    badges.append(badge("進行中", "now"));
+    row.append(badges);
+  }
+  if (paper.label) {
+    row.append(el("p", "paper-text", formatPaperLine(paper)));
+  } else {
+    row.append(el("p", "paper-when", formatChineseDate(paper.start)));
+    row.append(el("p", "paper-text", paper.title));
+  }
+  return row;
+}
+
+function renderPapers(papers) {
+  const section = el("section", "card papers");
+  section.id = "papers";
+  section.append(el("h2", null, "我嘅考試日程"));
+  section.append(el("p", "fine", "已過嘅日子會劃線。下一個未過嘅會特別標出。"));
+  const list = el("div", "paper-list");
+  for (const paper of papers) list.append(renderPaper(paper));
+  section.append(list);
+  const source = el("p", "event-source");
+  const link = externalLink(DATA.config.timetableUrl, "考評局時間表");
+  if (link) source.append(link);
+  section.append(source);
+  return section;
+}
+
 function renderCountdown(config) {
   const section = el("section", "card countdown");
   section.id = "countdown";
@@ -264,7 +308,7 @@ function renderCountdown(config) {
 
   const cd = countdownParts(config.examDate);
   if (cd.past) {
-    section.append(el("p", "countdown-arrived", "筆試首日到喇"));
+    section.append(el("p", "countdown-arrived", "第一份卷到喇"));
     section.append(el("p", "countdown-soft", "慢慢嚟，你得㗎。"));
   } else {
     const kicker = el("p", "countdown-kicker");
@@ -300,18 +344,16 @@ function renderCountdown(config) {
     section.append(live);
   }
 
-  const dateLine = el(
-    "p",
-    "countdown-date",
-    `筆試首日：${formatChineseDate(config.examDate)}${config.examDateTentative ? "（暫定）" : ""}`
-  );
-  section.append(dateLine);
+  section.append(renderCountdownDate(config));
+  const startNote = writtenExamStartNote(config.writtenExamStart);
+  if (startNote) section.append(el("p", "fine", startNote));
   if (config.writtenExamEnd) {
+    const endTentative = config.writtenExamEndTentative ?? config.examDateTentative;
     section.append(
       el(
         "p",
         "countdown-range",
-        `筆試期至 ${formatChineseDate(config.writtenExamEnd)}${config.examDateTentative ? "（暫定）" : ""}`
+        `筆試期至 ${formatChineseDate(config.writtenExamEnd)}${endTentative ? "（暫定）" : ""}`
       )
     );
   }
@@ -405,8 +447,10 @@ function renderDates(events) {
       "下一個未過嘅日子會特別標出。已過嘅標明已過。未有公布就寫未公布，唔會估。有「或會調整」嘅，聯招網頁寫明日期可能會改。有「暫定」嘅，考評局仍未落實。"
     )
   );
+  const school = events.filter((event) => event.category === "school");
   const info = events.filter((event) => event.category === "info");
   const jupas = events.filter((event) => event.category === "jupas");
+  if (school.length > 0) section.append(renderGroup("學校", null, school));
   section.append(renderGroup("大學資訊日", "2026 年。", info));
   section.append(
     renderGroup("大學聯招", "2027 年入學。正式日子以聯招同考評局最新公布為準。", jupas)
@@ -440,7 +484,7 @@ function renderFooter() {
     el(
       "p",
       null,
-      `呢一版喺 ${formatChineseDate(parts.date)} ${pad(parts.hour)}:${pad(parts.minute)}（香港時間）整好。倒數、每日一句同下一個日子，會喺你部手機按香港時間即時計算。`
+      `呢一版喺 ${formatChineseDate(parts.date)} ${pad(parts.hour)}:${pad(parts.minute)}（香港時間）整好。倒數、考試日程、每日一句同下一個日子，會喺你部手機按香港時間即時計算。`
     )
   );
   return footer;
@@ -471,15 +515,20 @@ function render() {
   shownDate = hongKongParts().date;
   const classified = classifyEvents(DATA.events, shownDate);
   const events = sortEvents(classified);
+  const school = events.filter((event) => event.category === "school");
   const info = events.filter((event) => event.category === "info");
   const jupas = events.filter((event) => event.category === "jupas");
+  school.forEach((event, index) => {
+    event.domId = `school-${index}`;
+  });
   info.forEach((event, index) => {
     event.domId = `info-${index}`;
   });
   jupas.forEach((event, index) => {
     event.domId = `jupas-${index}`;
   });
-  const ordered = [...info, ...jupas];
+  const ordered = [...school, ...info, ...jupas];
+  const papers = sortEvents(classifyEvents(DATA.papers || [], shownDate));
 
   const root = document.getElementById("app");
   root.replaceChildren();
@@ -499,6 +548,7 @@ function render() {
   nav.setAttribute("aria-label", "頁面章節");
   const links = [
     ["#countdown", "倒數"],
+    ["#papers", "考試日程"],
     ["#message", "今日一句"],
     ["#dates", "重要日子"],
     ["#tips", "溫書"],
@@ -512,6 +562,7 @@ function render() {
   header.append(nav);
   root.append(header);
   root.append(renderCountdown(DATA.config));
+  root.append(renderPapers(papers));
   root.append(renderMessage(shownDate));
   root.append(renderTip(shownDate));
   root.append(renderNext(ordered));

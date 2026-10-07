@@ -9,7 +9,11 @@ import {
   formatChineseDate,
   formatTime,
   formatEventWhen,
+  countdownCaption,
+  writtenExamStartNote,
+  formatPaperLine,
   classifyEvents,
+  sortEvents,
 } from "../src/logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -37,11 +41,23 @@ function contrast(hexA, hexB) {
 
 const config = JSON.parse(fs.readFileSync(path.join(root, "data/config.json"), "utf8"));
 const events = JSON.parse(fs.readFileSync(path.join(root, "data/events.json"), "utf8")).events;
+const papers = JSON.parse(fs.readFileSync(path.join(root, "data/papers.json"), "utf8")).papers;
 const messages = JSON.parse(fs.readFileSync(path.join(root, "data/messages.json"), "utf8")).messages;
 const subjects = JSON.parse(fs.readFileSync(path.join(root, "data/tips.json"), "utf8")).subjects;
 
-assert(config.examDate === "2027-04-06", "筆試首日應該係 2027-04-06");
-assert(config.examDateTentative === true, "筆試首日仍然係暫定");
+assert(config.examDate === "2027-04-08", "倒數目標應該係第一份卷 2027-04-08");
+assert(config.examLabel === "第一份卷：中文", "倒數標題應該係第一份卷中文");
+assert(config.examDateTentative === false, "筆試開始日已經公布，唔再標暫定");
+assert(config.writtenExamStart === "2027-04-06", "筆試開始日應該係 2027-04-06");
+assert(config.writtenExamEndTentative === true, "筆試期尾段仍然暫定");
+assert(
+  config.timetableUrl === "https://www.hkeaa.edu.hk/DocLibrary/HKDSE/Exam_Timetable/2027_DSE_Timetable.pdf",
+  "要連結去考評局時間表"
+);
+assert(countdownCaption(config) === "第一份卷：中文 2027年4月8日（四）", `倒數標題不正確：${countdownCaption(config)}`);
+assert(!countdownCaption(config).includes("暫定"), "第一份卷唔好標暫定");
+assert(writtenExamStartNote(config.writtenExamStart) === "文憑試筆試 4月6日開始", "筆試開始小字不正確");
+assert(formatChineseDate("2027-04-08") === "2027年4月8日（四）", "4 月 8 日係星期四");
 assert(messages.length >= 60, "鼓勵句子至少 60 句");
 assert(new Set(messages).size === messages.length, "鼓勵句子唔好重複");
 assert(!messages.some((message) => message.includes("Jasmine")), "鼓勵句子唔好寫名");
@@ -54,7 +70,8 @@ assert(
 
 const banned = ["HKU", "CUHK", "HKUST", "PolyU", "CityU", "HKBU", "EdUHK", "THEi", "JUPAS", "HKDSE"];
 const visibleText = [
-  ...events.flatMap((event) => [event.title, event.detail || ""]),
+  ...events.flatMap((event) => [event.title, event.detail || "", event.period || ""]),
+  ...papers.flatMap((paper) => [paper.title, paper.label || "", paper.detail || "", formatPaperLine(paper)]),
   ...messages,
   ...subjects.flatMap((subject) => [subject.name, ...subject.tips]),
 ].join("\n");
@@ -74,8 +91,10 @@ assert(formatTime("15:00") === "下午3時", "15:00 顯示");
 assert(formatTime("17:00") === "下午5時", "17:00 顯示");
 
 const noon = new Date("2026-10-06T04:00:00.000Z");
-const cd = countdownParts("2027-04-06", noon);
-assert(cd.past === false && cd.days === 181 && cd.hours === 12 && cd.minutes === 0, `倒數不正確：${JSON.stringify(cd)}`);
+const cd = countdownParts("2027-04-08", noon);
+assert(cd.past === false && cd.days === 183 && cd.hours === 12 && cd.minutes === 0, `倒數不正確：${JSON.stringify(cd)}`);
+assert(countdownParts("2027-04-08", new Date("2027-04-07T16:00:00.000Z")).past === true, "4 月 8 日凌晨一到就當日開始");
+assert(countdownParts("2027-04-08", new Date("2027-04-07T15:59:00.000Z")).past === false, "4 月 8 日凌晨前仍然倒數");
 
 const classified = classifyEvents(events, "2026-10-06");
 const pastInfo = classified.find((event) => event.title.includes("香港城市大學"));
@@ -84,6 +103,68 @@ assert(pastInfo && pastInfo.phase === "past", "10 月 3 日資訊日應該已過
 assert(nextEvent && nextEvent.title === "遞交聯招申請同繳付申請費", `下一個日子不正確：${nextEvent && nextEvent.title}`);
 assert(classified.find((event) => event.title === "東華學院資訊日").phase === "unannounced", "未公布狀態");
 assert(formatEventWhen(tungWah) === "未公布", "未公布唔好顯示估出來嘅日期");
+
+const schoolEvents = events.filter((event) => event.category === "school");
+assert(schoolEvents.length === 8, "學校日子應該有 8 項");
+const farewell = schoolEvents.find((event) => event.title === "告別崇拜");
+assert(farewell && formatEventWhen(farewell) === "2027年2月23日（二）下午", `告別崇拜日子不正確：${farewell && formatEventWhen(farewell)}`);
+assert(
+  formatEventWhen(schoolEvents.find((event) => event.title === "統一測驗")) === "2026年10月26日（一） 至 2026年10月31日（六）",
+  "統一測驗日子不正確"
+);
+assert(formatEventWhen(schoolEvents.find((event) => event.title === "中六家長之夜")) === "2026年10月16日（五）", "家長之夜日子不正確");
+assert(formatEventWhen(schoolEvents.find((event) => event.title === "中六家長日")) === "2026年12月5日（六）", "家長日日子不正確");
+const parentNight = classifyEvents(events, "2026-10-07").find((event) => event.title === "中六家長之夜");
+assert(parentNight && parentNight.phase === "future", "10 月 7 日家長之夜未到");
+const parentNightPast = classifyEvents(events, "2026-10-17").find((event) => event.title === "中六家長之夜");
+assert(parentNightPast && parentNightPast.phase === "past", "10 月 17 日家長之夜已過");
+const release = events.find((event) => event.title === "文憑試放榜");
+assert(release && release.start === "2027-07-14" && release.tentative === true, "放榜日 7 月 14 日仍然暫定");
+
+const timeOfDay = /上午|下午|早上|晚上|凌晨|早晨|\d{1,2}:\d{2}|\d+時/;
+assert(papers.length === 9, "考試日程應該有 9 項");
+const sortedPapers = sortEvents(papers);
+assert(sortedPapers[0].title === "英文口試", "考試日程第一個應該係英文口試");
+assert(
+  formatPaperLine(sortedPapers[0]) === "英文口試：2027年3月中至下旬（暫定，個別日子睇考試入座表）",
+  `英文口試句子不正確：${formatPaperLine(sortedPapers[0])}`
+);
+assert(!formatPaperLine(sortedPapers[0]).includes("3月11"), "口試唔好顯示大約範圍嘅實日");
+for (const paper of papers) {
+  assert(!timeOfDay.test(formatPaperLine(paper)), `考試日程唔好寫時間：${formatPaperLine(paper)}`);
+}
+const expectedPapers = [
+  ["2027-04-08", "中文 卷一、卷二", "2027年4月8日（四） 中文 卷一、卷二"],
+  ["2027-04-09", "英文 卷一、卷二", "2027年4月9日（五） 英文 卷一、卷二"],
+  ["2027-04-10", "英文 卷三（聽力及綜合能力）", "2027年4月10日（六） 英文 卷三（聽力及綜合能力）"],
+  ["2027-04-12", "數學 卷一、卷二", "2027年4月12日（一） 數學 卷一、卷二"],
+  ["2027-04-13", "公社", "2027年4月13日（二） 公社"],
+  ["2027-04-21", "物理 卷一、卷二", "2027年4月21日（三） 物理 卷一、卷二"],
+  ["2027-04-22", "經濟 卷一、卷二", "2027年4月22日（四） 經濟 卷一、卷二"],
+  ["2027-04-23", "M1", "2027年4月23日（五） M1"],
+];
+for (const [start, title, line] of expectedPapers) {
+  const paper = papers.find((item) => item.start === start && item.title === title);
+  assert(paper && formatPaperLine(paper) === line, `試卷不正確：${title}`);
+}
+
+function paperPhase(today, title) {
+  return classifyEvents(papers, today).find((paper) => paper.title === title).phase;
+}
+assert(paperPhase("2026-10-07", "英文口試") === "next", "而家下一個試應該係英文口試");
+assert(paperPhase("2026-10-07", "中文 卷一、卷二") === "future", "中文卷未到");
+assert(paperPhase("2027-03-20", "英文口試") === "ongoing", "3 月中口試進行中");
+assert(paperPhase("2027-04-01", "英文口試") === "past", "4 月口試已過");
+assert(paperPhase("2027-04-01", "中文 卷一、卷二") === "next", "口試之後下一個係中文");
+assert(paperPhase("2027-04-08", "中文 卷一、卷二") === "ongoing", "中文卷當日唔好劃線");
+assert(paperPhase("2027-04-09", "中文 卷一、卷二") === "past", "4 月 9 日中文卷已過");
+assert(paperPhase("2027-04-09", "英文 卷一、卷二") === "ongoing", "4 月 9 日係英文卷一、卷二");
+assert(paperPhase("2027-04-11", "數學 卷一、卷二") === "next", "4 月 11 日下一個係數學");
+assert(paperPhase("2027-04-24", "M1") === "past", "最後一科過咗要劃線");
+assert(
+  !classifyEvents(papers, "2027-04-24").some((paper) => paper.phase === "next" || paper.phase === "ongoing"),
+  "全部試過咗就冇下一個"
+);
 
 const first = pickByDate(messages, "2026-10-06");
 assert(pickByDate(messages, "2026-10-06") === first, "同一日句子要穩定");
@@ -126,6 +207,10 @@ assert(
 assert(!pageSource.includes("單元一"), "封面同程式唔好再寫單元一");
 assert(cssSource.includes("flip-down") && cssSource.includes("sand-drain"), "翻牌同沙漏要有動畫");
 assert(cssSource.includes("prefers-reduced-motion"), "要尊重減少動態");
+assert(pageSource.includes("我嘅考試日程") && pageSource.includes("考評局時間表"), "要有考試日程同時間表連結");
+assert(pageSource.includes('renderGroup("學校"'), "重要日子要有學校一組");
+assert(cssSource.includes("line-through") && cssSource.includes(".paper.phase-past"), "已過嘅試卷要劃線");
+assert(cssSource.includes(".paper.phase-next"), "下一個試卷要特別標出");
 
 const workflow = fs.readFileSync(path.join(root, ".github/workflows/pages.yml"), "utf8");
 assert(workflow.includes('cron: "5 16 * * *"'), "每日排程應該係 16:05 UTC");
@@ -155,7 +240,20 @@ const built = spawnSync(process.execPath, ["scripts/build.mjs"], {
 assert(built.status === 0, `加密建置失敗：${built.stderr || built.stdout}`);
 
 const encrypted = fs.readFileSync(path.join(root, "dist/index.html"), "utf8");
-for (const phrase of ["Jasmine", "公民與社會發展", "慢慢嚟都得", "香港理工大學", "2027-04-06", "概率同正態分佈"]) {
+for (const phrase of [
+  "Jasmine",
+  "公民與社會發展",
+  "慢慢嚟都得",
+  "香港理工大學",
+  "2027-04-06",
+  "2027-04-08",
+  "概率同正態分佈",
+  "我嘅考試日程",
+  "第一份卷",
+  "中六家長之夜",
+  "聽力及綜合能力",
+  "告別崇拜",
+]) {
   assert(!encrypted.includes(phrase), `加密頁唔應該睇到「${phrase}」`);
 }
 assert(encrypted.includes("喺呢部手機記住密碼"), "密碼頁要有記住密碼");
@@ -177,7 +275,13 @@ const plain = fs.readFileSync(path.join(root, "build/plain/index.html"), "utf8")
 assert(plain.includes("Jasmine，加油！"), "解鎖後要有招呼");
 assert(plain.includes("慢慢嚟都得"), "解鎖後要有鼓勵句子");
 assert(plain.includes("東華學院資訊日"), "解鎖後要有資訊日");
-assert(plain.includes("暫定"), "解鎖後要標明暫定");
+assert(plain.includes("暫定"), "解鎖後放榜同筆試期尾段仍然標明暫定");
+assert(plain.includes("第一份卷：中文"), "解鎖後倒數要計去第一份卷");
+assert(plain.includes("我嘅考試日程"), "解鎖後要有考試日程");
+assert(plain.includes("中六家長之夜"), "解鎖後要有學校日子");
+assert(plain.includes("考評局時間表"), "解鎖後要有時間表連結");
+assert(plain.includes('"examDateTentative":false'), "解鎖後嘅資料唔好再把筆試開始標做暫定");
+assert(plain.includes('"tentative":true'), "放榜嘅暫定標記要留喺資料入面");
 
 if (failed > 0) {
   console.error(`共 ${failed} 項唔通過`);
