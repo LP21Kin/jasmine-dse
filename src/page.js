@@ -286,7 +286,7 @@ function renderPaper(paper) {
 function renderPapers(papers) {
   const section = el("section", "card papers");
   section.id = "papers";
-  section.append(el("h2", null, "我嘅考試日程"));
+  section.append(el("h2", null, "DSE 考程"));
   section.append(el("p", "fine", "已過嘅日子會劃線。下一個未過嘅會特別標出。"));
   const list = el("div", "paper-list");
   for (const paper of papers) list.append(renderPaper(paper));
@@ -298,52 +298,76 @@ function renderPapers(papers) {
   return section;
 }
 
-function renderCountdown(config) {
+function renderExamCountdown(config) {
+  const block = el("div", "countdown-main");
+  const cd = countdownParts(config.examDate);
+  if (cd.past) {
+    block.append(el("p", "countdown-arrived", "第一份卷到喇"));
+    block.append(el("p", "countdown-soft", "慢慢嚟，你得㗎。"));
+    return block;
+  }
+  const kicker = el("p", "countdown-kicker");
+  kicker.append(
+    svgFrom(
+      `<svg viewBox="0 0 24 24"><path d="M12 2.5l1.8 5.2 5.5.2-4.3 3.5 1.5 5.3L12 13.8 7.5 16.7l1.5-5.3L4.7 7.9l5.5-.2L12 2.5z"/></svg>`,
+      "inline-spark"
+    ),
+    document.createTextNode("仲有"),
+    svgFrom(
+      `<svg viewBox="0 0 24 24"><path d="M12 20s-6.2-3.9-8.4-7.2C2.2 10.2 2.9 7 5.4 5.8 7.2 5 9 5.6 10.2 7.1L12 9.2l1.8-2.1C15 5.6 16.8 5 18.6 5.8 21.1 7 21.8 10.2 20.4 12.8 18.2 16.1 12 20 12 20z"/></svg>`,
+      "inline-spark inline-spark-heart"
+    )
+  );
+  block.append(kicker);
+  const days = el("div", "flip-row");
+  days.id = "cd-days";
+  days.setAttribute("aria-hidden", "true");
+  paintDigits(days, String(cd.days), false);
+  block.append(days);
+  block.append(el("p", "countdown-unit", "日"));
+  const timeRow = el("div", "time-row");
+  timeRow.append(hourglass());
+  const hms = el("div", "countdown-hms");
+  hms.id = "cd-hms";
+  hms.append(hmsLine("cd-hours", pad(cd.hours), "小時"));
+  hms.append(hmsLine("cd-minutes", pad(cd.minutes), "分鐘"));
+  hms.append(hmsLine("cd-seconds", pad(cd.seconds), "秒"));
+  timeRow.append(hms);
+  block.append(timeRow);
+  const live = el("p", "sr-only", `仲有 ${cd.days} 日 ${cd.hours} 小時 ${cd.minutes} 分鐘`);
+  live.id = "cd-live";
+  block.append(live);
+  return block;
+}
+
+function renderSchoolCountdown(events, today) {
+  const card = el("aside", "school-countdown");
+  card.append(el("h3", null, "林護倒數"));
+  const target = nextSchoolEvent(events, today);
+  if (!target) {
+    card.append(el("p", "school-cd-name", "呢啲日子都過咗。"));
+    return card;
+  }
+  const cd = countdownParts(target.start);
+  const days = cd.past ? 0 : cd.days;
+  card.append(el("p", "school-cd-kicker", "仲有"));
+  card.append(el("p", "school-cd-days", String(days)));
+  card.append(el("p", "school-cd-unit", "日"));
+  card.append(el("p", "school-cd-name", target.title));
+  card.append(el("p", "school-cd-date", formatChineseDate(target.start)));
+  return card;
+}
+
+function renderCountdown(config, events, today) {
   const section = el("section", "card countdown");
   section.id = "countdown";
   const labelRow = el("div", "label-row");
-  labelRow.append(el("h2", null, "倒數"));
+  labelRow.append(el("h2", null, "DSE 倒數"));
   if (config.examDateTentative) labelRow.append(badge("暫定", "tentative"));
   section.append(labelRow);
-
-  const cd = countdownParts(config.examDate);
-  if (cd.past) {
-    section.append(el("p", "countdown-arrived", "第一份卷到喇"));
-    section.append(el("p", "countdown-soft", "慢慢嚟，你得㗎。"));
-  } else {
-    const kicker = el("p", "countdown-kicker");
-    kicker.append(
-      svgFrom(
-        `<svg viewBox="0 0 24 24"><path d="M12 2.5l1.8 5.2 5.5.2-4.3 3.5 1.5 5.3L12 13.8 7.5 16.7l1.5-5.3L4.7 7.9l5.5-.2L12 2.5z"/></svg>`,
-        "inline-spark"
-      ),
-      document.createTextNode("仲有"),
-      svgFrom(
-        `<svg viewBox="0 0 24 24"><path d="M12 20s-6.2-3.9-8.4-7.2C2.2 10.2 2.9 7 5.4 5.8 7.2 5 9 5.6 10.2 7.1L12 9.2l1.8-2.1C15 5.6 16.8 5 18.6 5.8 21.1 7 21.8 10.2 20.4 12.8 18.2 16.1 12 20 12 20z"/></svg>`,
-        "inline-spark inline-spark-heart"
-      )
-    );
-    section.append(kicker);
-    const days = el("div", "flip-row");
-    days.id = "cd-days";
-    days.setAttribute("aria-hidden", "true");
-    paintDigits(days, String(cd.days), false);
-    section.append(days);
-    section.append(el("p", "countdown-unit", "日"));
-    const timeRow = el("div", "time-row");
-    timeRow.append(hourglass());
-    const hms = el("div", "countdown-hms");
-    hms.id = "cd-hms";
-    hms.append(hmsLine("cd-hours", pad(cd.hours), "小時"));
-    hms.append(hmsLine("cd-minutes", pad(cd.minutes), "分鐘"));
-    hms.append(hmsLine("cd-seconds", pad(cd.seconds), "秒"));
-    timeRow.append(hms);
-    section.append(timeRow);
-    const live = el("p", "sr-only", `仲有 ${cd.days} 日 ${cd.hours} 小時 ${cd.minutes} 分鐘`);
-    live.id = "cd-live";
-    section.append(live);
-  }
-
+  const columns = el("div", "countdown-columns");
+  columns.append(renderExamCountdown(config), renderSchoolCountdown(events, today));
+  section.append(columns);
   section.append(renderCountdownDate(config));
   const startNote = writtenExamStartNote(config.writtenExamStart);
   if (startNote) section.append(el("p", "fine", startNote));
@@ -447,10 +471,8 @@ function renderDates(events) {
       "下一個未過嘅日子會特別標出。已過嘅標明已過。未有公布就寫未公布，唔會估。有「或會調整」嘅，聯招網頁寫明日期可能會改。有「暫定」嘅，考評局仍未落實。"
     )
   );
-  const school = events.filter((event) => event.category === "school");
   const info = events.filter((event) => event.category === "info");
   const jupas = events.filter((event) => event.category === "jupas");
-  if (school.length > 0) section.append(renderGroup("學校", null, school));
   section.append(renderGroup("大學資訊日", "2026 年。", info));
   section.append(
     renderGroup("大學聯招", "2027 年入學。正式日子以聯招同考評局最新公布為準。", jupas)
@@ -458,10 +480,20 @@ function renderDates(events) {
   return section;
 }
 
+function renderSchoolDates(events) {
+  const section = el("section", "dates");
+  section.id = "school-dates";
+  section.append(el("h2", "section-title", "林護重要日子"));
+  const list = el("div", "events");
+  for (const event of events) list.append(renderEvent(event));
+  section.append(list);
+  return section;
+}
+
 function renderSubjects() {
   const section = el("section", "subjects");
   section.id = "tips";
-  section.append(el("h2", "section-title", "溫書小貼士"));
+  section.append(el("h2", "section-title", "溫書貼士"));
   section.append(el("p", "fine section-note", "撳科目就可以展開。慢慢睇，唔使一次過做晒。"));
   for (const subject of DATA.subjects) {
     const details = el("details", "card subject");
@@ -484,7 +516,7 @@ function renderFooter() {
     el(
       "p",
       null,
-      `呢一版喺 ${formatChineseDate(parts.date)} ${pad(parts.hour)}:${pad(parts.minute)}（香港時間）整好。倒數、考試日程、每日一句同下一個日子，會喺你部手機按香港時間即時計算。`
+      `呢一版喺 ${formatChineseDate(parts.date)} ${pad(parts.hour)}:${pad(parts.minute)}（香港時間）整好。兩個倒數、考程、每日一句同下一個日子，會喺你部手機按香港時間即時計算。`
     )
   );
   return footer;
@@ -547,11 +579,11 @@ function render() {
   const nav = el("nav", "quick");
   nav.setAttribute("aria-label", "頁面章節");
   const links = [
-    ["#countdown", "倒數"],
-    ["#papers", "考試日程"],
+    ["#countdown", "DSE 倒數"],
+    ["#school-dates", "林護重要日子"],
+    ["#papers", "DSE 考程"],
     ["#message", "今日一句"],
-    ["#dates", "重要日子"],
-    ["#tips", "溫書"],
+    ["#tips", "溫書貼士"],
   ];
   for (const [href, label] of links) {
     const link = document.createElement("a");
@@ -561,13 +593,14 @@ function render() {
   }
   header.append(nav);
   root.append(header);
-  root.append(renderCountdown(DATA.config));
+  root.append(renderCountdown(DATA.config, school, shownDate));
+  root.append(renderSchoolDates(school));
   root.append(renderPapers(papers));
   root.append(renderMessage(shownDate));
+  root.append(renderSubjects());
   root.append(renderTip(shownDate));
   root.append(renderNext(ordered));
   root.append(renderDates(ordered));
-  root.append(renderSubjects());
   root.append(renderFooter());
 }
 

@@ -151,6 +151,12 @@ function classifyEvents(events, today) {
   });
 }
 
+function nextSchoolEvent(events, today) {
+  const upcoming = events.filter((event) => event.category === "school" && event.start && event.start >= today);
+  upcoming.sort((a, b) => (a.start < b.start ? -1 : a.start > b.start ? 1 : 0));
+  return upcoming[0] || null;
+}
+
 function sortEvents(events) {
   return [...events].sort((a, b) => {
     if (!a.start && !b.start) return 0;
@@ -174,5 +180,6 @@ export {
   writtenExamStartNote,
   formatPaperLine,
   classifyEvents,
+  nextSchoolEvent,
   sortEvents,
 };
