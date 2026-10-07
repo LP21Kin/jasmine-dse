@@ -402,7 +402,44 @@ h3 { font-size: 1.2rem; margin: 0.2rem 0 0.35rem; }
   font-size: 1.35rem;
   color: var(--rose);
 }
+.countdown .label-row { justify-content: center; }
 .countdown-date, .countdown-range { margin-top: 0.7rem; font-weight: 700; }
+.countdown-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.12rem;
+}
+.countdown .fine { margin-top: 0.35rem; }
+.paper-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.75rem;
+}
+.paper {
+  background: #fff5f8;
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 0.7rem 0.85rem 0.75rem;
+}
+.paper-when,
+.paper-text {
+  font-weight: 700;
+  line-height: 1.45;
+}
+.paper.phase-past { background: #fbf7f8; }
+.paper.phase-past .paper-when,
+.paper.phase-past .paper-text {
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+}
+.paper.phase-next,
+.paper.phase-ongoing {
+  border: 2px solid #c44b73;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(196, 75, 115, 0.12);
+}
 .countdown-arrived {
   margin-top: 0.6rem;
   font-size: clamp(2rem, 8vw, 2.6rem);

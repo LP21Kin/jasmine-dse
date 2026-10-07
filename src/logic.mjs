@@ -81,6 +81,7 @@ function formatEventWhen(event) {
   if (event.startTime) start += formatTime(event.startTime);
   const sameDay = !event.end || event.end === event.start;
   if (sameDay) {
+    if (!event.startTime && event.period) start += event.period;
     if (event.endTime && event.endTime !== event.startTime) {
       return `${start} 至 ${formatTime(event.endTime)}`;
     }
@@ -89,6 +90,29 @@ function formatEventWhen(event) {
   let end = formatChineseDate(event.end);
   if (event.endTime) end += formatTime(event.endTime);
   return `${start} 至 ${end}`;
+}
+
+function countdownCaption(config) {
+  const label = config.examLabel ? `${config.examLabel} ` : "";
+  const tentative = config.examDateTentative ? "（暫定）" : "";
+  return `${label}${formatChineseDate(config.examDate)}${tentative}`;
+}
+
+function writtenExamStartNote(isoDate) {
+  if (!isoDate) return "";
+  const [, month, day] = isoDate.split("-").map(Number);
+  return `文憑試筆試 ${month}月${day}日開始`;
+}
+
+function formatPaperLine(paper) {
+  if (paper.label) {
+    const notes = [];
+    if (paper.tentative) notes.push("暫定");
+    if (paper.detail) notes.push(paper.detail);
+    const tail = notes.length ? `（${notes.join("，")}）` : "";
+    return `${paper.title}：${paper.label}${tail}`;
+  }
+  return `${formatChineseDate(paper.start)} ${paper.title}`;
 }
 
 function classifyEvents(events, today) {
@@ -146,6 +170,9 @@ export {
   formatChineseDate,
   formatTime,
   formatEventWhen,
+  countdownCaption,
+  writtenExamStartNote,
+  formatPaperLine,
   classifyEvents,
   sortEvents,
 };

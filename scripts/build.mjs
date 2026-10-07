@@ -40,13 +40,37 @@ function assertDate(value, label) {
 
 const configFile = readJson("data/config.json");
 const eventsFile = readJson("data/events.json");
+const papersFile = readJson("data/papers.json");
 const messagesFile = readJson("data/messages.json");
 const tipsFile = readJson("data/tips.json");
 
 assertDate(configFile.examDate, "data/config.json 嘅 examDate");
+if (configFile.writtenExamStart) assertDate(configFile.writtenExamStart, "data/config.json 嘅 writtenExamStart");
 if (configFile.writtenExamEnd) assertDate(configFile.writtenExamEnd, "data/config.json 嘅 writtenExamEnd");
 if (configFile.timezone !== "Asia/Hong_Kong") {
   fail("data/config.json 嘅 timezone 要保持 Asia/Hong_Kong。");
+}
+if (!configFile.examLabel || typeof configFile.examLabel !== "string") {
+  fail("data/config.json 要有 examLabel，例如「第一份卷：中文」。");
+}
+if (!configFile.timetableUrl || !/^https:\/\//.test(configFile.timetableUrl)) {
+  fail("data/config.json 要有 https 開頭嘅 timetableUrl。");
+}
+const timeOfDay = /上午|下午|早上|晚上|凌晨|早晨|\d{1,2}:\d{2}|\d+時/;
+if (!Array.isArray(papersFile.papers) || papersFile.papers.length === 0) {
+  fail("data/papers.json 要有考試日程。");
+}
+for (const paper of papersFile.papers) {
+  if (!paper.title) fail("考試日程每一項都要有標題。");
+  if (!paper.start) fail(`「${paper.title}」要有 start，用來排序同判斷已過。`);
+  assertDate(paper.start, `「${paper.title}」嘅 start`);
+  if (paper.end) {
+    assertDate(paper.end, `「${paper.title}」嘅 end`);
+    if (paper.end < paper.start) fail(`「${paper.title}」嘅結束日早過開始日。`);
+  }
+  if (paper.startTime || paper.endTime) fail(`「${paper.title}」唔好寫鐘點。`);
+  const blob = [paper.title, paper.label || "", paper.detail || ""].join("\n");
+  if (timeOfDay.test(blob)) fail(`「${paper.title}」唔好寫上晝、下晝或者鐘點。`);
 }
 if (!Array.isArray(messagesFile.messages) || messagesFile.messages.length < 60) {
   fail("data/messages.json 至少要有 60 句鼓勵。");
@@ -65,9 +89,18 @@ for (const subject of tipsFile.subjects) {
 if (!Array.isArray(eventsFile.events) || eventsFile.events.length === 0) {
   fail("data/events.json 要有日子。");
 }
+const categories = new Set(["info", "jupas", "school"]);
 for (const event of eventsFile.events) {
-  if (!event.title || (event.category !== "info" && event.category !== "jupas")) {
-    fail(`日子「${event.title || "未命名"}」要有標題，category 只可以係 info 或者 jupas。`);
+  if (!event.title || !categories.has(event.category)) {
+    fail(`日子「${event.title || "未命名"}」要有標題，category 只可以係 info、jupas 或者 school。`);
+  }
+  if (event.period) {
+    if (!["上午", "下午", "晚上"].includes(event.period)) {
+      fail(`「${event.title}」嘅 period 只可以係上午、下午或者晚上，唔好估鐘點。`);
+    }
+    if (event.startTime || event.endTime || event.end) {
+      fail(`「${event.title}」有 period 就唔好再填鐘點或者結束日。`);
+    }
   }
   if (event.unannounced) {
     if (event.start) fail(`「${event.title}」標明未公布，就唔好填 start。`);
@@ -88,11 +121,17 @@ for (const event of eventsFile.events) {
 const data = {
   config: {
     examDate: configFile.examDate,
+    examLabel: configFile.examLabel,
     examDateTentative: Boolean(configFile.examDateTentative),
+    writtenExamStart: configFile.writtenExamStart || null,
     writtenExamEnd: configFile.writtenExamEnd || null,
+    writtenExamEndTentative:
+      configFile.writtenExamEndTentative == null ? null : Boolean(configFile.writtenExamEndTentative),
     sourceUrl: configFile.sourceUrl,
+    timetableUrl: configFile.timetableUrl,
   },
   events: eventsFile.events,
+  papers: papersFile.papers,
   messages: messagesFile.messages,
   subjects: tipsFile.subjects,
   builtAt: new Date().toISOString(),
@@ -165,9 +204,17 @@ if (result.status !== 0) {
 const encryptedPath = path.join(distDir, "index.html");
 if (!fs.existsSync(encryptedPath)) fail("加密後搵唔到 dist/index.html。");
 const encrypted = fs.readFileSync(encryptedPath, "utf8");
-const leaked = ["Jasmine", "公民與社會發展", "慢慢嚟都得", "香港理工大學", "概率同正態分佈"].filter((phrase) =>
-  encrypted.includes(phrase)
-);
+const leaked = [
+  "Jasmine",
+  "公民與社會發展",
+  "慢慢嚟都得",
+  "香港理工大學",
+  "概率同正態分佈",
+  "我嘅考試日程",
+  "第一份卷",
+  "中六家長之夜",
+  "聽力及綜合能力",
+].filter((phrase) => encrypted.includes(phrase));
 if (leaked.length > 0) {
   fail(`加密後嘅網頁仍然睇到內容（${leaked.join("、")}）。已停止，唔會當成功。`);
 }
