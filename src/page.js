@@ -580,9 +580,9 @@ function render() {
   nav.setAttribute("aria-label", "頁面章節");
   const links = [
     ["#countdown", "DSE 倒數"],
+    ["#message", "今日一句"],
     ["#school-dates", "林護重要日子"],
     ["#papers", "DSE 考程"],
-    ["#message", "今日一句"],
     ["#tips", "溫書貼士"],
   ];
   for (const [href, label] of links) {
@@ -594,9 +594,9 @@ function render() {
   header.append(nav);
   root.append(header);
   root.append(renderCountdown(DATA.config, school, shownDate));
+  root.append(renderMessage(shownDate));
   root.append(renderSchoolDates(school));
   root.append(renderPapers(papers));
-  root.append(renderMessage(shownDate));
   root.append(renderSubjects());
   root.append(renderTip(shownDate));
   root.append(renderNext(ordered));

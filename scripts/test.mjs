@@ -217,6 +217,21 @@ assert(cssSource.includes("flip-down") && cssSource.includes("sand-drain"), "翻
 assert(cssSource.includes("prefers-reduced-motion"), "要尊重減少動態");
 assert(pageSource.includes("DSE 考程") && pageSource.includes("考評局時間表"), "要有考程同時間表連結");
 assert(pageSource.includes("林護重要日子") && pageSource.includes("DSE 倒數") && pageSource.includes("溫書貼士"), "章節名稱要改好");
+const navOrder = ["DSE 倒數", "今日一句", "林護重要日子", "DSE 考程", "溫書貼士"];
+let navCursor = 0;
+for (const label of navOrder) {
+  const at = pageSource.indexOf(`"${label}"`, navCursor);
+  assert(at > navCursor, `導覽次序要係 ${navOrder.join("、")}`);
+  navCursor = at;
+}
+const renderBody = pageSource.slice(pageSource.indexOf("function render()"));
+const sectionOrder = ["renderCountdown(", "renderMessage(", "renderSchoolDates(", "renderPapers(", "renderSubjects("];
+let sectionCursor = 0;
+for (const call of sectionOrder) {
+  const at = renderBody.indexOf(call, sectionCursor);
+  assert(at > sectionCursor, "章節次序要係倒數、今日一句、林護重要日子、考程、溫書貼士");
+  sectionCursor = at;
+}
 assert(pageSource.includes("林護倒數") && pageSource.includes("countdown-columns"), "倒數要左右並列，右邊係林護倒數");
 assert(pageSource.includes("仲有") && !pageSource.includes("仔有"), "倒數用字係仲有");
 assert(pageSource.includes("大學資訊日") && pageSource.includes("大學聯招"), "大學資訊日同聯招要留低");
