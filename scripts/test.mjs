@@ -106,7 +106,7 @@ assert(classified.find((event) => event.title === "東華學院資訊日").phase
 assert(formatEventWhen(tungWah) === "未公布", "未公布唔好顯示估出來嘅日期");
 
 const schoolEvents = events.filter((event) => event.category === "school");
-assert(schoolEvents.length === 8, "學校日子應該有 8 項");
+assert(schoolEvents.length === 12, "學校日子應該有 12 項");
 assert(schoolEvents.every((event) => event.title.startsWith("林護 ")), "學校日子標題要加簡稱，方便同其他日子分辨");
 const farewell = schoolEvents.find((event) => event.title === "林護 告別崇拜");
 assert(farewell && formatEventWhen(farewell) === "2027年2月23日（二）下午", `告別崇拜日子不正確：${farewell && formatEventWhen(farewell)}`);
@@ -123,11 +123,76 @@ assert(parentNightPast && parentNightPast.phase === "past", "10 月 17 日家長
 const schoolNow = nextSchoolEvent(schoolEvents, "2026-10-07");
 assert(schoolNow && schoolNow.start === "2026-10-16" && schoolNow.title === "林護 中六家長之夜", "而家林護倒數應該計去家長之夜");
 assert(nextSchoolEvent(schoolEvents, "2026-10-16").start === "2026-10-16", "家長之夜當日仍然計緊嗰日");
-assert(nextSchoolEvent(schoolEvents, "2026-10-17").start === "2026-10-26", "家長之夜過咗就計去統一測驗第一日");
-assert(nextSchoolEvent(schoolEvents, "2026-10-27").start === "2026-12-05", "統一測驗開始日過咗就計去下一個");
+assert(nextSchoolEvent(schoolEvents, "2026-10-17").start === "2026-10-21", "家長之夜過咗就計去校內聯招註冊講座");
+assert(nextSchoolEvent(schoolEvents, "2026-10-22").start === "2026-10-26", "註冊講座過咗就計去統一測驗第一日");
+assert(nextSchoolEvent(schoolEvents, "2026-10-27").start === "2026-11-30", "統一測驗開始日過咗就計去校內聯招截止");
 assert(countdownParts("2026-10-16", new Date("2026-10-07T00:00:00+08:00")).days === 9, "10 月 7 日零時到家長之夜係 9 日");
 const release = events.find((event) => event.title === "文憑試放榜");
 assert(release && release.start === "2027-07-14" && release.tentative === true, "放榜日 7 月 14 日仍然暫定");
+
+const registrationTalk = schoolEvents.find((event) => event.title === "林護 校內「大學聯招辦法」網上註冊講座");
+assert(
+  registrationTalk &&
+    registrationTalk.start === "2026-10-21" &&
+    registrationTalk.period === "上午" &&
+    formatEventWhen(registrationTalk) === "2026年10月21日（三）上午",
+  "10 月 21 日上午要有校內聯招註冊講座"
+);
+const schoolDeadline = schoolEvents.find((event) => event.title === "林護 校內聯招截止");
+assert(
+  schoolDeadline &&
+    schoolDeadline.start === "2026-11-30" &&
+    schoolDeadline.startTime === "23:59" &&
+    formatEventWhen(schoolDeadline) === "2026年11月30日（一）下午11時59分",
+  "校內聯招截止係 11 月 30 日下午 11 時 59 分"
+);
+const roomHandIn = schoolEvents.find((event) => event.title === "林護 其他學歷證明交予 315 室");
+assert(
+  roomHandIn && roomHandIn.start === "2027-02-03" && roomHandIn.detail.includes("交予 315 室"),
+  "其他學歷證明要寫交予 315 室"
+);
+const schoolNomination = schoolEvents.find((event) => event.title === "林護 校長推薦計劃校內申請截止");
+assert(
+  schoolNomination && schoolNomination.start === "2027-02-03" && schoolNomination.detail.includes("4 位"),
+  "校長推薦校內申請截止要有 4 個名額"
+);
+assert(!visibleText.includes("岑秀慧"), "唔好寫老師全名");
+
+const hkuDay = events.find((event) => event.title === "香港大學資訊日");
+assert(hkuDay && hkuDay.category === "info" && hkuDay.start === "2026-10-24", "香港大學資訊日要留低");
+const applyWindow = events.find((event) => event.title === "遞交聯招申請同繳付申請費");
+assert(
+  applyWindow &&
+    applyWindow.start === "2026-10-07" &&
+    applyWindow.startTime === "09:00" &&
+    applyWindow.end === "2026-12-02" &&
+    applyWindow.endTime === "17:00" &&
+    applyWindow.detail.includes("2026年12月2日下午5時") &&
+    !applyWindow.detail.includes("逾期唔會收"),
+  "聯招申請窗口要去到 12 月 2 日下午 5 時，同逾期申請分開"
+);
+const choiceUpdate = events.find((event) => event.title === "放榜前更改課程選擇");
+assert(
+  choiceUpdate &&
+    choiceUpdate.start === "2026-12-04" &&
+    choiceUpdate.end === "2027-05-26" &&
+    choiceUpdate.endTime === "17:00" &&
+    choiceUpdate.detail.includes("100 港元") &&
+    choiceUpdate.detail.includes("2027年5月26日下午5時"),
+  "放榜前改選要去到 5 月 26 日下午 5 時"
+);
+for (const [title, start, time] of [
+  ["比賽／活動經驗及成就（OEA）填寫限期", "2027-01-20", "17:00"],
+  ["學校評核報告（SRR）遞交", "2027-03-17", "17:00"],
+  ["其他學術成績遞交", "2027-04-21", "17:00"],
+  ["校長推薦經聯招系統遞交", "2027-05-10", "17:00"],
+  ["遞交學生學習概覽（SLP）", "2027-05-26", "17:00"],
+  ["確認香港中學文憑考試年份", "2027-06-16", "17:00"],
+  ["公布比賽／活動經驗及成就（OEA）同校長推薦計劃特別考慮結果", "2027-07-09", "09:00"],
+]) {
+  const event = events.find((item) => item.title === title);
+  assert(event && event.category === "jupas" && event.start === start && event.startTime === time, `聯招日子不正確：${title}`);
+}
 
 const timeOfDay = /上午|下午|早上|晚上|凌晨|早晨|\d{1,2}:\d{2}|\d+時/;
 assert(papers.length === 9, "考試日程應該有 9 項");
