@@ -7,10 +7,25 @@
       "start": "2026-10-16"
     },
     {
+      "title": "林護 校內「大學聯招辦法」網上註冊講座",
+      "category": "school",
+      "start": "2026-10-21",
+      "period": "上午",
+      "detail": "首次登入前要先建立申請人帳戶，並記住自己設嘅登入名稱同密碼。",
+      "source": "https://www.jupas.edu.hk/en/"
+    },
+    {
       "title": "林護 統一測驗",
       "category": "school",
       "start": "2026-10-26",
       "end": "2026-10-31"
+    },
+    {
+      "title": "林護 校內聯招截止",
+      "category": "school",
+      "start": "2026-11-30",
+      "startTime": "23:59",
+      "detail": "要繳交申請費 500 港元、輸入個人資料、確認 20 個課程選擇，並完成「我的多元出路 具體行動方案」。聯招系統截止係 2026年12月2日下午5時。"
     },
     {
       "title": "林護 中六家長日",
@@ -28,6 +43,18 @@
       "category": "school",
       "start": "2027-01-18",
       "end": "2027-02-02"
+    },
+    {
+      "title": "林護 其他學歷證明交予 315 室",
+      "category": "school",
+      "start": "2027-02-03",
+      "detail": "包括語文科目、音樂考試成績、其他中國語文成績（ACL）同以前學歷證明。交予 315 室。聯招系統截止係 2027年4月21日下午5時。"
+    },
+    {
+      "title": "林護 校長推薦計劃校內申請截止",
+      "category": "school",
+      "start": "2027-02-03",
+      "detail": "獲推薦名額：4 位。校長經聯招系統遞交嘅限期係 2027年5月10日下午5時。"
     },
     {
       "title": "林護 模考查卷",
@@ -110,7 +137,7 @@
       "startTime": "09:00",
       "end": "2026-12-02",
       "endTime": "17:00",
-      "detail": "申請費 500 港元。要喺截止前交表同付款，逾期唔會收。",
+      "detail": "申請費 500 港元。聯招截止係 2026年12月2日下午5時，要喺呢個時間前交表同付款。過咗就係逾期申請，要另付 500 港元附加費。",
       "source": "https://www.jupas.edu.hk/en/application-procedures/application-other-submission-deadline/application-period-and-fee/"
     },
     {
@@ -130,8 +157,65 @@
       "startTime": "09:00",
       "end": "2027-05-26",
       "endTime": "17:00",
-      "detail": "每次 100 港元，次數冇上限。",
+      "detail": "每次 100 港元，次數冇上限。可以改次序、刪改、以另一課程取代，或者增選，全部唔可以多過 20 個。最後截止係 2027年5月26日下午5時。",
       "source": "https://www.jupas.edu.hk/en/application-procedures/application-other-submission-deadline/selection-updating-and-modification-of-programme-choices/"
+    },
+    {
+      "title": "比賽／活動經驗及成就（OEA）填寫限期",
+      "category": "jupas",
+      "start": "2027-01-20",
+      "startTime": "17:00",
+      "detail": "最多填 10 項，揀最能代表自己嘅經歷同成就，唔係愈多愈好。證明文件如適用，都要喺呢個限期前上載。逾期唔會收。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/supporting-documents-submission/other-experiences-and-achievements-in-competitions-activities-oea/"
+    },
+    {
+      "title": "學校評核報告（SRR）遞交",
+      "category": "jupas",
+      "start": "2027-03-17",
+      "startTime": "17:00",
+      "detail": "由學校喺聯招系統遞交。同學可以登入帳戶核對交咗未。逾期唔會收。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/supporting-documents-submission/school-reference-report-reference-report/"
+    },
+    {
+      "title": "其他學術成績遞交",
+      "category": "jupas",
+      "start": "2027-04-21",
+      "startTime": "17:00",
+      "detail": "包括語文科目、音樂考試成績、其他中國語文成績（ACL）同以前學歷。校內證明要喺 2027年2月3日交予 315 室。逾期唔會收。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/application-other-submission-deadline/application-key-dates-and-deadlines/"
+    },
+    {
+      "title": "校長推薦經聯招系統遞交",
+      "category": "jupas",
+      "start": "2027-05-10",
+      "startTime": "17:00",
+      "detail": "由校長經聯招系統遞交。校內申請截止係 2027年2月3日，獲推薦名額 4 位。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/before-hkdse-results-announcement/school-principal-s-nominations-spn/"
+    },
+    {
+      "title": "遞交學生學習概覽（SLP）",
+      "category": "jupas",
+      "start": "2027-05-26",
+      "startTime": "17:00",
+      "detail": "必須係 PDF，檔案唔可以大過 3MB。同放榜前最後一次改選同一日截止。逾期唔會收。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/before-hkdse-results-announcement/student-learning-profile-slp/"
+    },
+    {
+      "title": "確認香港中學文憑考試年份",
+      "category": "jupas",
+      "start": "2027-06-16",
+      "startTime": "17:00",
+      "detail": "要喺聯招帳戶確認應考年份。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/application-other-submission-deadline/application-key-dates-and-deadlines/"
+    },
+    {
+      "title": "公布比賽／活動經驗及成就（OEA）同校長推薦計劃特別考慮結果",
+      "category": "jupas",
+      "start": "2027-07-09",
+      "startTime": "09:00",
+      "adjustable": true,
+      "detail": "登入帳戶就可以睇。唔使回覆，課程選擇仍然會入主輪。",
+      "source": "https://www.jupas.edu.hk/en/application-procedures/post-hkdse-exam-results-announcement/feedback-on-special-consideration/"
     },
     {
       "title": "文憑試放榜",
