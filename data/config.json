@@ -1,11 +1,11 @@
 {
-  "_comment": "倒數計去 examDate 當日凌晨（香港時間）。而家係第一份卷中文 2027-04-08，唔係 4 月 6 日（嗰日係視覺藝術）。writtenExamStart 係筆試開始日，已經公布，examDateTentative 保持 false。writtenExamEnd 尾段仍未最後落實，writtenExamEndTentative 保持 true。放榜暫定喺 events.json。唔好改 timezone。",
+  "_comment": "倒數計去 examDate 當日凌晨（香港時間）。而家係第一份卷中文 2027-04-08，唔係 4 月 6 日（嗰日係視覺藝術）。writtenExamStart 係筆試開始日 2027-04-06，examDateTentative 保持 false。writtenExamEnd 係 2027-05-03，跟考評局 2026年11月6日修訂定稿時間表，筆試日子已落實，writtenExamEndTentative 係 false。5月4日仍然係後備日，唔計入 writtenExamEnd。放榜暫定喺 events.json。唔好改 timezone。timetableUrl 係修訂版時間表 PDF，sourceUrl 係重要日期頁。",
   "examDate": "2027-04-08",
   "examLabel": "第一份卷：中文",
   "examDateTentative": false,
   "writtenExamStart": "2027-04-06",
   "writtenExamEnd": "2027-05-03",
-  "writtenExamEndTentative": true,
+  "writtenExamEndTentative": false,
   "timezone": "Asia/Hong_Kong",
   "sourceUrl": "https://www.hkeaa.edu.hk/tc/hkdse/event_timetable/",
   "timetableUrl": "https://www.hkeaa.edu.hk/DocLibrary/HKDSE/Exam_Timetable/2027_DSE_Timetable.pdf"

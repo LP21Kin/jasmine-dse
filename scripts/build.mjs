@@ -57,6 +57,14 @@ if (!configFile.timetableUrl || !/^https:\/\//.test(configFile.timetableUrl)) {
   fail("data/config.json 要有 https 開頭嘅 timetableUrl。");
 }
 const timeOfDay = /上午|下午|早上|晚上|凌晨|早晨|\d{1,2}:\d{2}|\d+時/;
+const slotKeys = new Set(["name", "startTime", "endTime", "endApproximate"]);
+
+function assertTime(value, label) {
+  if (!timePattern.test(value)) fail(`${label} 要用 08:30 呢種格式。而家係：${value}`);
+  const [hour, minute] = value.split(":").map(Number);
+  if (hour > 23 || minute > 59) fail(`${label} 唔係有效時間：${value}`);
+}
+
 if (!Array.isArray(papersFile.papers) || papersFile.papers.length === 0) {
   fail("data/papers.json 要有考試日程。");
 }
@@ -68,9 +76,30 @@ for (const paper of papersFile.papers) {
     assertDate(paper.end, `「${paper.title}」嘅 end`);
     if (paper.end < paper.start) fail(`「${paper.title}」嘅結束日早過開始日。`);
   }
-  if (paper.startTime || paper.endTime) fail(`「${paper.title}」唔好寫鐘點。`);
-  const blob = [paper.title, paper.label || "", paper.detail || ""].join("\n");
-  if (timeOfDay.test(blob)) fail(`「${paper.title}」唔好寫上晝、下晝或者鐘點。`);
+  if (paper.startTime || paper.endTime) {
+    fail(`「${paper.title}」嘅鐘點請寫喺 slots，唔好寫喺項目本身。`);
+  }
+  if (timeOfDay.test(paper.title) || timeOfDay.test(paper.label || "")) {
+    fail(`「${paper.title}」標題同 label 唔好寫鐘點，鐘點放喺 slots。`);
+  }
+  if (!Array.isArray(paper.slots) || paper.slots.length === 0) {
+    fail(`「${paper.title}」要有開考同完卷時間。`);
+  }
+  for (const slot of paper.slots) {
+    if (!slot || typeof slot !== "object") fail(`「${paper.title}」嘅時段格式唔啱。`);
+    for (const key of Object.keys(slot)) {
+      if (!slotKeys.has(key)) fail(`「${paper.title}」嘅時段有未知欄位 ${key}。`);
+    }
+    if (slot.name != null && (typeof slot.name !== "string" || !slot.name.trim())) {
+      fail(`「${paper.title}」嘅卷別名稱唔啱。`);
+    }
+    if (slot.endApproximate != null && typeof slot.endApproximate !== "boolean") {
+      fail(`「${paper.title}」嘅 endApproximate 要係 true 或者 false。`);
+    }
+    assertTime(slot.startTime, `「${paper.title}」嘅 startTime`);
+    assertTime(slot.endTime, `「${paper.title}」嘅 endTime`);
+    if (slot.endTime <= slot.startTime) fail(`「${paper.title}」嘅完卷時間要遲過開考時間。`);
+  }
 }
 if (!Array.isArray(messagesFile.messages) || messagesFile.messages.length < 60) {
   fail("data/messages.json 至少要有 60 句鼓勵。");

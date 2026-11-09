@@ -60,10 +60,10 @@
 - `examLabel` 係倒數下面嗰行，而家係「第一份卷：中文」。
 - `writtenExamStart` 係文憑試筆試開始日 `2027-04-06`。網頁會加一行小字「文憑試筆試 4月6日開始」。4 月 6 日唔係倒數目標。
 - 筆試開始日已經公布，`examDateTentative` 保持 `false`，倒數唔會再顯示「暫定」。
-- `writtenExamEnd` 係筆試期最後一日。尾段仍未最後落實，所以 `writtenExamEndTentative` 保持 `true`。
+- `writtenExamEnd` 係筆試期最後一日 `2027-05-03`。2026年11月6日嘅修訂定稿時間表已經落實筆試日子，所以 `writtenExamEndTentative` 而家係 `false`。5月4日仍然係後備日，唔計入呢個日期。
 - 放榜日 `2027-07-14` 仍然係暫定，喺 [`data/events.json`](data/events.json) 嗰項保留 `"tentative": true`。
 
-科目卷別喺 [`data/papers.json`](data/papers.json)。只寫日子，唔好寫上晝、下晝或者鐘點。已過嘅日子會劃線，下一個未過嘅會特別標出，按香港日期即時計算。英文口試未有個別日子，畫面寫「3月中至下旬」，`start` 同 `end` 只係用來判斷已過，唔會顯示出嚟。
+科目卷別喺 [`data/papers.json`](data/papers.json)，只放中文、英文、數學、M1、公社、經濟、物理，同英文口試。每個卷別用 `slots` 寫開考同完卷時間，格式係 `08:30`。已過嘅日子會劃線，下一個未過嘅會特別標出，按香港日期即時計算。英文口試係 2027年3月9日至18日（星期一至星期五），仍然暫定，畫面顯示 `label`；個別場次睇准考證。特殊需要考生場次暫定 3月20日。
 
 ## 網頁幾時會自己更新
 

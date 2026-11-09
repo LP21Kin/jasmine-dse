@@ -482,13 +482,22 @@ h3 { font-size: 1.2rem; margin: 0.2rem 0 0.35rem; }
   padding: 0.7rem 0.85rem 0.75rem;
 }
 .paper-when,
-.paper-text {
+.paper-text,
+.paper-time {
   font-weight: 700;
   line-height: 1.45;
 }
+.paper-text,
+.paper-time,
+.paper-detail {
+  word-break: keep-all;
+}
+.paper-time { margin-top: 0.15rem; }
+.paper-detail { margin-top: 0.2rem; }
 .paper.phase-past { background: #fbf7f8; }
 .paper.phase-past .paper-when,
-.paper.phase-past .paper-text {
+.paper.phase-past .paper-text,
+.paper.phase-past .paper-time {
   text-decoration: line-through;
   text-decoration-thickness: 1.5px;
 }

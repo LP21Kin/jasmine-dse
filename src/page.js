@@ -265,21 +265,20 @@ function renderCountdownDate(config) {
 function renderPaper(paper) {
   const row = el("article", `paper phase-${paper.phase}`);
   if (paper.phase === "past") row.append(el("span", "sr-only", "已過"));
-  if (paper.phase === "next") {
-    const badges = el("div", "badges");
-    badges.append(badge("下一個", "next"));
-    row.append(badges);
-  } else if (paper.phase === "ongoing") {
-    const badges = el("div", "badges");
-    badges.append(badge("進行中", "now"));
-    row.append(badges);
-  }
+  const badges = el("div", "badges");
+  if (paper.phase === "next") badges.append(badge("下一個", "next"));
+  if (paper.phase === "ongoing") badges.append(badge("進行中", "now"));
+  if (paper.tentative) badges.append(badge("暫定", "tentative"));
+  if (badges.childNodes.length > 0) row.append(badges);
   if (paper.label) {
-    row.append(el("p", "paper-text", formatPaperLine(paper)));
+    row.append(el("p", "paper-text", `${paper.title}：${paper.label}`));
   } else {
     row.append(el("p", "paper-when", formatChineseDate(paper.start)));
     row.append(el("p", "paper-text", paper.title));
   }
+  const times = formatPaperTimes(paper);
+  if (times) row.append(el("p", "paper-time", times));
+  if (paper.detail) row.append(el("p", "paper-detail fine", paper.detail));
   return row;
 }
 
@@ -287,7 +286,7 @@ function renderPapers(papers) {
   const section = el("section", "card papers");
   section.id = "papers";
   section.append(el("h2", null, "DSE 考程"));
-  section.append(el("p", "fine", "已過嘅日子會劃線。下一個未過嘅會特別標出。"));
+  section.append(el("p", "fine", "已過嘅日子會劃線。下一個未過嘅會特別標出。下面嘅鐘點跟考評局修訂定稿時間表。"));
   const list = el("div", "paper-list");
   for (const paper of papers) list.append(renderPaper(paper));
   section.append(list);
