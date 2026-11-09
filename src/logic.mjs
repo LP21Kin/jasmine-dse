@@ -104,15 +104,31 @@ function writtenExamStartNote(isoDate) {
   return `文憑試筆試 ${month}月${day}日開始`;
 }
 
+function formatSlot(slot) {
+  const range = `${formatTime(slot.startTime)}至${formatTime(slot.endTime)}`;
+  const approx = slot.endApproximate ? "（完結時間約計）" : "";
+  return `${slot.name ? `${slot.name} ` : ""}${range}${approx}`;
+}
+
+function formatPaperTimes(paper) {
+  if (!Array.isArray(paper.slots) || paper.slots.length === 0) return "";
+  return paper.slots.map(formatSlot).join("、");
+}
+
 function formatPaperLine(paper) {
+  const times = formatPaperTimes(paper);
   if (paper.label) {
     const notes = [];
     if (paper.tentative) notes.push("暫定");
+    if (times) notes.push(times);
     if (paper.detail) notes.push(paper.detail);
     const tail = notes.length ? `（${notes.join("，")}）` : "";
     return `${paper.title}：${paper.label}${tail}`;
   }
-  return `${formatChineseDate(paper.start)} ${paper.title}`;
+  let line = `${formatChineseDate(paper.start)} ${paper.title}`;
+  if (times) line += ` ${times}`;
+  if (paper.detail) line += `。${paper.detail}`;
+  return line;
 }
 
 function classifyEvents(events, today) {
@@ -178,6 +194,7 @@ export {
   formatEventWhen,
   countdownCaption,
   writtenExamStartNote,
+  formatPaperTimes,
   formatPaperLine,
   classifyEvents,
   nextSchoolEvent,
